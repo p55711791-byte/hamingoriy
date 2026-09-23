@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<script src="/assets/js/maintenance-check.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سالواتور | SALVATORES RP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#100a0b;
+    --panel:#1b1214;
+    --panel-2:#221619;
+    --gold:#c6a15b;
+    --gold-bright:#eccf8d;
+    --blood:#7a1a26;
+    --blood-bright:#a52c3a;
+    --cream:#ece3d0;
+    --muted:#8a7a6c;
+    --line: rgba(198,161,91,0.22);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--cream);
+    font-family:'Vazirmatn', sans-serif;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* film grain */
+  .grain{
+    position:fixed; inset:0; pointer-events:none; z-index:50; opacity:0.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .vignette{
+    position:fixed; inset:0; pointer-events:none; z-index:1;
+    background:radial-gradient(ellipse at 50% 0%, transparent 35%, rgba(0,0,0,0.55) 100%);
+  }
+
+  .glow-blood{
+    position:fixed; top:-10%; right:-10%; width:60vw; height:60vw; z-index:0; pointer-events:none;
+    background:radial-gradient(circle, rgba(122,26,38,0.28) 0%, transparent 65%);
+    filter:blur(20px);
+  }
+  .glow-gold{
+    position:fixed; bottom:-15%; left:-10%; width:50vw; height:50vw; z-index:0; pointer-events:none;
+    background:radial-gradient(circle, rgba(198,161,91,0.12) 0%, transparent 65%);
+    filter:blur(20px);
+  }
+
+  .wrap{max-width:1360px; margin:0 auto; padding:0 48px; position:relative; z-index:2;}
+
+  /* NAV */
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:28px 48px; position:relative; z-index:10;
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:14px;}
+  .brand-seal{
+    width:42px; height:42px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--blood-bright), var(--blood) 60%, #4a0f18 100%);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Aref Ruqaa', serif; font-weight:700; font-size:20px; color:var(--gold-bright);
+    box-shadow:0 0 0 1px var(--gold), 0 4px 14px rgba(122,26,38,0.5);
+  }
+  .brand-text{line-height:1.15;}
+  .brand-text .fa-name{font-family:'Aref Ruqaa', serif; font-size:22px; color:var(--gold-bright); font-weight:700;}
+  .brand-text .en-sub{font-size:10px; letter-spacing:4px; color:var(--muted); display:block; margin-top:2px;}
+
+  .nav-links{display:flex; align-items:center; gap:38px; list-style:none;}
+  .nav-links a{
+    color:var(--cream); text-decoration:none; font-size:14.5px; font-weight:500;
+    position:relative; opacity:0.85; transition:opacity .25s;
+  }
+  .nav-links a::after{
+    content:""; position:absolute; right:0; bottom:-8px; width:0; height:1px; background:var(--gold);
+    transition:width .3s ease;
+  }
+  .nav-links a:hover{opacity:1;}
+  .nav-links a:hover::after{width:100%;}
+
+  .btn-ghost{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:12px 24px; border:1px solid var(--gold); border-radius:3px;
+    color:var(--gold-bright); text-decoration:none; font-size:14px; font-weight:600;
+    background:rgba(198,161,91,0.06); transition:all .3s ease;
+  }
+  .btn-ghost:hover{background:rgba(198,161,91,0.15); box-shadow:0 0 22px rgba(198,161,91,0.25);}
+
+  /* HERO */
+  .hero{
+    display:grid; grid-template-columns:1.15fr 1fr; gap:64px;
+    padding:96px 48px 60px; align-items:center; position:relative; z-index:2;
+  }
+
+  /* status card (left) */
+  .card{
+    background:linear-gradient(160deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line); border-radius:6px;
+    padding:32px; position:relative;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.7);
+    opacity:0; transform:translateY(24px); animation:rise .9s ease forwards .15s;
+  }
+  .card::before{
+    content:""; position:absolute; inset:8px; border:1px solid rgba(198,161,91,0.15); border-radius:4px; pointer-events:none;
+  }
+  .card-head{display:flex; align-items:center; justify-content:space-between; padding-bottom:20px; border-bottom:1px solid var(--line); margin-bottom:24px;}
+  .status-pill{
+    display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:20px;
+    background:rgba(122,26,38,0.18); border:1px solid rgba(122,26,38,0.5); font-size:13px; color:#e78a92;
+  }
+  .status-pill.online{background:rgba(80,150,110,0.15); border-color:rgba(80,150,110,0.5); color:#7fd6a0;}
+  .status-pill .dot{width:7px; height:7px; border-radius:50%; background:currentColor; box-shadow:0 0 8px currentColor;}
+  .card-head .label{display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted);}
+
+  .big-number{font-size:64px; font-weight:800; text-align:center; color:var(--gold-bright); font-family:'Vazirmatn',sans-serif; line-height:1;
+    text-shadow:0 0 30px rgba(198,161,91,0.25);}
+  .big-caption{text-align:center; color:var(--muted); font-size:14px; margin-top:10px;}
+
+  .ledger-bars{display:flex; gap:3px; justify-content:center; align-items:flex-end; height:26px; margin:22px 0 26px;}
+  .ledger-bars span{
+    width:4px; height:var(--h); background:linear-gradient(to top, var(--blood), var(--gold));
+    opacity:0.65; border-radius:2px; transform-origin:bottom;
+    animation:pulse-bar 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-bar{
+    0%, 100%{ transform:scaleY(0.55); opacity:0.4; }
+    50%{ transform:scaleY(1); opacity:0.85; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ledger-bars span{ animation:none; transform:scaleY(0.8); }
+  }
+
+  .card-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:16px 6px; border-top:1px solid var(--line);
+    text-decoration:none; color:var(--cream); font-size:14.5px; font-weight:500;
+    transition:padding-right .25s ease, color .25s ease;
+  }
+  .card-row:hover{padding-right:12px; color:var(--gold-bright);}
+  .card-row .ic{opacity:0.7;}
+
+  /* hero right */
+  .hero-right{opacity:0; transform:translateY(24px); animation:rise .9s ease forwards .35s;}
+  .eyebrow{
+    font-size:15px; letter-spacing:2px; color:var(--gold); margin-bottom:6px; font-weight:600;
+  }
+  .headline{
+    font-family:'Aref Ruqaa', serif; font-weight:700;
+    font-size:112px; line-height:1; color:transparent;
+    background:linear-gradient(180deg, var(--gold-bright) 15%, var(--gold) 55%, #8a6a34 100%);
+    -webkit-background-clip:text; background-clip:text;
+    position:relative; display:inline-block; margin:6px 0 18px;
+  }
+  .seal-mark{
+    position:absolute; top:-30px; left:-40px; width:120px; height:120px; z-index:-1; opacity:0.9;
+  }
+  .tagline{font-size:26px; color:var(--cream); font-weight:600; margin-bottom:22px;}
+  .tagline em{font-style:normal; color:var(--gold-bright);}
+  .desc{font-size:16.5px; line-height:2; color:var(--muted); max-width:620px; margin-bottom:38px;}
+
+  .cta-row{display:flex; gap:16px; align-items:center;}
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:16px 34px; border-radius:3px; text-decoration:none;
+    background:linear-gradient(135deg, var(--blood-bright), var(--blood));
+    color:#fdf1e6; font-weight:700; font-size:15.5px;
+    box-shadow:0 12px 30px -8px rgba(122,26,38,0.7), inset 0 0 0 1px rgba(255,255,255,0.06);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 16px 36px -6px rgba(122,26,38,0.85);}
+  .btn-secondary{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:16px 30px; border-radius:3px; text-decoration:none;
+    border:1px solid var(--line); color:var(--cream); font-weight:600; font-size:15px;
+    background:rgba(255,255,255,0.02); transition:all .25s ease;
+  }
+  .btn-secondary:hover{border-color:var(--gold); background:rgba(198,161,91,0.08);}
+
+  @keyframes rise{ to{opacity:1; transform:translateY(0);} }
+
+  /* divider flourish */
+  .flourish{
+    display:flex; align-items:center; gap:16px; justify-content:center; margin:0 48px; padding:0 0 40px;
+    color:var(--muted);
+  }
+  .flourish .line{flex:1; height:1px; background:linear-gradient(90deg, transparent, var(--line) 50%, transparent);}
+  .flourish .glyph{font-family:'Aref Ruqaa',serif; color:var(--gold); font-size:20px;}
+
+  /* footer trust */
+  footer{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;
+    padding:26px 48px 40px; border-top:1px solid var(--line); font-size:13px; color:var(--muted);
+  }
+  .trust{display:flex; align-items:center; gap:14px;}
+  .trust .badge{
+    width:34px; height:34px; border-radius:50%; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; color:var(--gold);
+    font-family:'Aref Ruqaa',serif; font-size:15px;
+  }
+  .trust .enamad-badge{
+    width:42px; height:42px; overflow:hidden; background:#fff; padding:0;
+  }
+  .trust .enamad-badge a{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+  }
+  .trust .enamad-badge img{
+    width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;
+  }
+
+  @media (max-width: 980px){
+    .hero{grid-template-columns:1fr; padding:60px 24px;}
+    .headline{font-size:72px;}
+    nav{padding:20px 24px; flex-wrap:wrap; gap:16px;}
+    .nav-links{display:none;}
+    .wrap{padding:0 24px;}
+    footer{padding:24px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .card, .hero-right{animation:none; opacity:1; transform:none;}
+  }
+
+  /* SECTIONS */
+  .section{padding:70px 48px 90px; position:relative; z-index:2;}
+  .section-head{text-align:center; max-width:640px; margin:0 auto 50px;}
+  .section-eyebrow{font-size:14px; letter-spacing:2px; color:var(--gold); font-weight:600; margin-bottom:10px;}
+  .section-title{font-family:'Aref Ruqaa', serif; font-weight:700; font-size:42px; color:var(--gold-bright); margin-bottom:14px;}
+  .section-sub{color:var(--muted); font-size:15.5px; line-height:1.9;}
+
+  /* showroom */
+  .showroom-grid{
+    display:grid; grid-template-columns:repeat(var(--showroom-columns, 3), 1fr); gap:22px;
+    max-width:1200px; margin:0 auto 40px;
+  }
+  .show-tile{
+    position:relative; display:block; aspect-ratio:var(--gallery-ratio, 4/3); border-radius:6px; overflow:hidden;
+    border:1px solid var(--line); text-decoration:none; isolation:isolate;
+  }
+  .tile-ph{
+    position:absolute; inset:0; background:var(--tint); transition:transform .5s ease;
+  }
+  .tile-ph::before{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 25% 30%, rgba(255,255,255,0.08), transparent 45%),
+      radial-gradient(circle at 75% 80%, rgba(0,0,0,0.35), transparent 55%);
+  }
+  .tile-glyph{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-family:'Aref Ruqaa',serif; font-size:15px; color:rgba(236,227,208,0.28);
+    letter-spacing:1px; white-space:nowrap;
+  }
+  .tile-img{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; transition:transform .5s ease;
+  }
+  .g-tile:hover .tile-img{ transform:scale(1.06); }
+  .tile-label{
+    position:absolute; inset-inline:0; bottom:0; padding:16px 18px;
+    background:linear-gradient(to top, rgba(6,3,4,0.88), transparent);
+    color:var(--cream); font-weight:600; font-size:14.5px; z-index:2;
+  }
+  .tile-label small{display:block; color:var(--gold); font-size:11.5px; font-weight:500; margin-top:3px;}
+  .show-tile:hover .tile-ph{transform:scale(1.06);}
+  .showroom-cta{display:flex; justify-content:center;}
+
+  /* rules */
+  .rules-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+    max-width:1200px; margin:0 auto;
+  }
+  .rule-card{
+    background:linear-gradient(165deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line); border-radius:6px; padding:30px;
+    text-align:right; transition:transform .3s ease, border-color .3s ease;
+  }
+  .rule-card:hover{transform:translateY(-5px); border-color:var(--gold);}
+  .rule-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;}
+  .version-badge{
+    background:rgba(198,161,91,0.12); color:var(--gold-bright); border:1px solid var(--line);
+    padding:5px 12px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:0.5px;
+  }
+  .rule-icon-wrap{
+    width:52px; height:52px; border-radius:10px;
+    background:linear-gradient(160deg, var(--panel-2), var(--panel));
+    border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+  }
+  .rule-icon-wrap svg{width:24px; height:24px; stroke:var(--gold-bright); fill:none; stroke-width:1.6;}
+  .rule-card h3{font-family:'Aref Ruqaa', serif; font-size:23px; color:var(--cream); margin-bottom:10px;}
+  .rule-card p{color:var(--muted); font-size:13.5px; line-height:1.9; margin-bottom:26px; min-height:44px;}
+  .btn-download{
+    display:inline-flex; align-items:center; gap:8px; width:100%; justify-content:center;
+    padding:12px 18px; border-radius:3px; border:1px solid var(--line);
+    color:var(--cream); text-decoration:none; font-size:13.5px; font-weight:600;
+    background:rgba(255,255,255,0.02); transition:all .25s ease;
+  }
+  .btn-download:hover{border-color:var(--gold); background:rgba(198,161,91,0.08); color:var(--gold-bright);}
+
+  @media (max-width: 900px){
+    .showroom-grid, .rules-grid{grid-template-columns:1fr;}
+    .section{padding:56px 24px 70px;}
+    .section-title{font-size:32px;}
+  }
+</style>
+<script src="/assets/js/version-check.js"></script>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="vignette"></div>
+<div class="glow-blood"></div>
+<div class="glow-gold"></div>
+
+<nav>
+  <div class="brand">
+    <div class="brand-seal">S</div>
+    <div class="brand-text">
+      <span class="fa-name">سالواتور</span>
+      <span class="en-sub">SALVATORES</span>
+    </div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">خانه</a></li>
+    <li><a href="/shop/">فروشگاه</a></li>
+    <li><a href="/gallery/">گالری</a></li>
+    <li><a href="#rules">قوانین</a></li>
+    <!-- <li><a href="#">کادر مدیریت</a></li> -->
+    <!-- <li><a href="#">عضویت</a></li> -->
+  </ul>
+  <a href="/login/" class="btn-ghost" id="auth-btn">ورود به داشبورد ←</a>
+</nav>
+
+<section class="hero">
+
+  <div class="hero-right">
+    <div class="eyebrow">شهر</div>
+    <h1 class="headline">سالواتور</h1>
+    <div class="tagline">قدرت با <em>احترام</em> ساخته می‌شود</div>
+    <p class="desc">
+      یک شهر، هزار سرنوشت. وارد دنیایی شو که هر تصمیم یک عاقبت دارد؛ وفاداری‌ات را ثابت کن، جایگاهت را در شهر بساز
+    </p>
+    <div class="cta-row">
+      <a href="vmp://connect/f6hw8r" class="btn-primary">پیوستن به شهر ←</a>
+      <a href="#" class="btn-secondary" data-placeholder="discord-link">دیسکورد ما 💬</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="status-pill" id="status-pill"><span class="dot"></span> <span id="status-text">در حال بررسی...</span></span>
+      <span class="label">وضعیت زنده‌ی شهر <span style="color:var(--gold)">✦</span></span>
+    </div>
+
+    <div class="big-number" id="player-count">0</div>
+    <div class="big-caption">بازیکن هم‌اکنون در شهر حاضرند</div>
+
+    <div class="ledger-bars">
+      <span style="--h:10px; animation-delay:-0.1s"></span><span style="--h:18px; animation-delay:-0.6s"></span><span style="--h:8px; animation-delay:-1.1s"></span>
+      <span style="--h:22px; animation-delay:-0.3s"></span><span style="--h:6px; animation-delay:-0.9s"></span><span style="--h:16px; animation-delay:-1.4s"></span>
+      <span style="--h:24px; animation-delay:-0.2s"></span><span style="--h:9px; animation-delay:-0.7s"></span><span style="--h:14px; animation-delay:-1.2s"></span>
+      <span style="--h:20px; animation-delay:-0.5s"></span><span style="--h:7px; animation-delay:-1.0s"></span><span style="--h:12px; animation-delay:-0.4s"></span>
+    </div>
+
+    <a href="vmp://connect/f6hw8r" class="card-row">
+      ورود به شهر
+      <span class="ic">←</span>
+    </a>
+    <a href="/shop/" class="card-row">
+      فروشگاه سرور
+      <span class="ic">←</span>
+    </a>
+    <a href="#" class="card-row" data-placeholder="discord-link">
+      عضویت در دیسکورد
+      <span class="ic">←</span>
+    </a>
+  </div>
+
+</section>
+
+<div class="flourish"><div class="line"></div><span class="glyph">✦</span><div class="line"></div></div>
+
+<section class="section" id="rules">
+  <div class="section-head">
+    <div class="section-eyebrow">آیین‌نامه‌ی شهر</div>
+    <h2 class="section-title">قوانین سرور</h2>
+    <p class="section-sub">یکی از دسته‌بندی‌های زیر را برای مطالعه انتخاب کنید</p>
+  </div>
+
+  <div class="rules-grid" id="rules-grid"></div>
+</section>
+
+<div class="flourish"><div class="line"></div><span class="glyph">✦</span><div class="line"></div></div>
+
+<section class="section" id="gallery-preview">
+  <div class="section-head">
+    <div class="section-eyebrow">نگاهی به شهر</div>
+    <h2 class="section-title">لحظاتی از سالواتور</h2>
+    <p class="section-sub">گوشه‌هایی از شهر که داستان‌های خانواده در آن رقم می‌خورد</p>
+  </div>
+
+  <div class="showroom-grid" id="showroom-grid"></div>
+
+  <div class="showroom-cta">
+    <a href="/gallery/" class="btn-secondary">مشاهده گالری کامل ←</a>
+  </div>
+</section>
+
+<div class="flourish"><div class="line"></div><span class="glyph">✦</span><div class="line"></div></div>
+
+<footer>
+  <span>سالواتور — یک تجربه‌ی رول‌پلی جدی و بدون مرز</span>
+  <div class="trust">
+    <span>دارای نمادهای اعتماد رسمی</span>
+    <span class="badge enamad-badge">
+      <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=7194619&Code=YKEgrzRyYH44bz60Evj9qJfO2vHH2SxN'>
+        <img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=7194619&Code=YKEgrzRyYH44bz60Evj9qJfO2vHH2SxN' alt='نماد اعتماد الکترونیکی' style='cursor:pointer' code='YKEgrzRyYH44bz60Evj9qJfO2vHH2SxN'>
+      </a>
+    </span>
+<!--     <span class="badge">S</span> -->
+  </div>
+</footer>
+
+<script>
+  const STATUS_URL = 'https://api.vmp.ir/server/api.php?work=singleData2&id=f6hw8r';
+
+  async function updateServerStatus(){
+    const pill = document.getElementById('status-pill');
+    const statusText = document.getElementById('status-text');
+    const countEl = document.getElementById('player-count');
+
+    try{
+      const res = await fetch(STATUS_URL, { cache: 'no-store' });
+      if(!res.ok) throw new Error('bad response');
+      const json = await res.json();
+      const clients = json?.Data?.clients;
+
+      if(typeof clients === 'number'){
+        countEl.textContent = clients;
+        pill.classList.add('online');
+        statusText.textContent = 'آنلاین';
+      } else {
+        throw new Error('no client data');
+      }
+    } catch(err){
+      pill.classList.remove('online');
+      statusText.textContent = 'آفلاین';
+      countEl.textContent = '0';
+    }
+  }
+
+  updateServerStatus();
+  setInterval(updateServerStatus, 30000);
+
+  document.querySelectorAll('[data-placeholder="discord-link"]').forEach(el => {
+    el.title = 'لینک دیسکورد را اینجا اضافه کنید';
+  });
+  
+  (async function syncAuthButton(){
+    const authBtn = document.getElementById('auth-btn');
+    if(!authBtn) return;
+    try{
+      const res = await fetch('/api/profile', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+      if(!res.ok) return; // 401 = not logged in, leave button as-is
+      const json = await res.json();
+      const name = json?.data?.character_name;
+      authBtn.href = '/dashboard/';
+      authBtn.textContent = name ? `${name}` : 'پنل کاربری ←';
+    } catch(err){
+      // network hiccup — leave the default login button in place
+    }
+  })();
+
+  (async function loadRules(){
+    const grid = document.getElementById('rules-grid');
+    if(!grid) return;
+    const esc = (s) => { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; };
+    try{
+      const res = await fetch('/api/rules-documents', { headers: { Accept: 'application/json' } });
+      const json = await res.json();
+      const documents = (json && json.data && json.data.documents) ? json.data.documents : [];
+
+      grid.innerHTML = documents.map(doc => `
+        <div class="rule-card">
+          <div class="rule-top">
+            <span class="version-badge">آخرین ویرایش</span>
+            <span class="rule-icon-wrap">
+              <svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 13h5M9.5 16.5h5"/></svg>
+            </span>
+          </div>
+          <h3>${esc(doc.title)}</h3>
+          <p>${esc(doc.description || '')}</p>
+          ${doc.url
+            ? `<a href="${esc(doc.url)}" download class="btn-download">دانلود PDF ↓</a>`
+            : `<span class="btn-download" style="opacity:.5; cursor:not-allowed;">به‌زودی</span>`}
+        </div>
+      `).join('');
+    } catch(err){
+      // leave the section empty rather than show broken content
+    }
+  })();
+
+  (async function loadShowroom(){
+    const grid = document.getElementById('showroom-grid');
+    if(!grid) return;
+    try{
+      const res = await fetch('/api/gallery', { headers: { Accept: 'application/json' } });
+      const json = await res.json();
+      const images = (json && json.data && json.data.images) ? json.data.images : [];
+      const settings = (json && json.data && json.data.settings) ? json.data.settings : {};
+      const count = Number(settings.homepage_count) || 3;
+
+      document.documentElement.style.setProperty('--gallery-ratio', (settings.aspect_ratio || '4:3').replace(':', '/'));
+      document.documentElement.style.setProperty('--showroom-columns', count);
+
+      // Prefer images marked "featured" in the admin panel; fill any
+      // remaining slots with the next images so this section never
+      // looks empty even if nothing's been marked featured yet.
+      const featured = images.filter(img => img.is_featured);
+      const rest = images.filter(img => !img.is_featured);
+      const picks = [...featured, ...rest].slice(0, count);
+      const esc = (s) => { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; };
+
+      grid.innerHTML = picks.map(img => `
+        <a href="/gallery/" class="show-tile">
+          <img src="${esc(img.image)}" alt="${esc(img.title)}" class="tile-img" onerror="this.closest('.show-tile').remove()">
+          <div class="tile-label">${esc(img.title)}${img.subtitle ? `<small>${esc(img.subtitle)}</small>` : ''}</div>
+        </a>
+      `).join('');
+    } catch(err){
+      // leave the section empty rather than show broken content
+    }
+  })();
+</script>
+
+</body>
+</html>
